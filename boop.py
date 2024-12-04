@@ -24,7 +24,7 @@ def render_text(text_in_fn, text_out_fn, size_y, size_x, font, font_size):
     return cv2.imread(text_out_fn)
 
 
-def run(model_fn, img_fn, text_fn, point_y, point_x, font, font_size):
+def run(model_fn, img_fn, text_fn, point_y_percent, point_x_percent, font, font_size):
     # read img
     img = cv2.imread(img_fn)
 
@@ -39,7 +39,9 @@ def run(model_fn, img_fn, text_fn, point_y, point_x, font, font_size):
 
     # generate masks
     predictor.set_image(img)
-    input_point = np.array([[point_y, point_x]])
+    point_y = point_y_percent * img.shape[0]
+    point_x = point_x_percent * img.shape[1]
+    input_point = np.array([[point_x, point_y]])
     input_label = np.array([1])
     masks, _, _ = predictor.predict(
         point_coords=input_point,
@@ -68,7 +70,7 @@ def run(model_fn, img_fn, text_fn, point_y, point_x, font, font_size):
         output_fn = "{}_final{}.{}".format(img_fn[:img_fn_last_dot], mask_count, img_fn[img_fn_last_dot+1:])
         cv2.imwrite(output_fn, final)
 
-run("../sam_vit_h_4b8939.pth", "cercei1.jpg", "text.txt", 1900, 1600, "Ubuntu", 200)
+run("../sam_vit_h_4b8939.pth", "cercei2.jpg", "text.txt", 0.5, 0.4, "Ubuntu", 200)
 '''
 render_text("text.txt", "text.png", 2448, 3264, "Ubuntu", 200)
 '''
