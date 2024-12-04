@@ -70,7 +70,7 @@ def run(model_fn, img_fn, text_fn, point_y_percent, point_x_percent, font, font_
         output_fn = "{}_final{}.{}".format(img_fn[:img_fn_last_dot], mask_count, img_fn[img_fn_last_dot+1:])
         cv2.imwrite(output_fn, final)
 
-run("../sam_vit_h_4b8939.pth", "cercei2.jpg", "text.txt", 0.5, 0.4, "Ubuntu", 200)
+run("../sam_vit_h_4b8939.pth", "cercei2.jpg", "dog.txt", 0.5, 0.4, "Ubuntu", 200)
 '''
 render_text("text.txt", "text.png", 2448, 3264, "Ubuntu", 200)
 '''
