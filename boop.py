@@ -2,6 +2,7 @@ import sys
 import cv2
 import numpy as np
 from segment_anything import SamPredictor, sam_model_registry
+import subprocess
 
 def isolate(img_fn, model_fn, point_x, point_y):
     img = cv2.imread(img_fn)
@@ -27,26 +28,42 @@ def isolate(img_fn, model_fn, point_x, point_y):
         foreground[:,:,3] = mask
         cv2.imwrite("foreground{}.png".format(i), foreground)
 
-def tmp():
-    background = cv2.imread("background2.png")
-    foreground = cv2.imread("foreground2.png")
-    text = cv2.imread("text.png")
+def combine(background_fn, foreground_fn, text_fn, output_fn):
+    background = cv2.imread(background_fn)
+    foreground = cv2.imread(foreground_fn)
+    text = cv2.imread(text_fn)
 
     text2 = cv2.cvtColor(text, cv2.COLOR_RGB2GRAY)
     _, text3 = cv2.threshold(text2, 120, 255, cv2.THRESH_BINARY)
     background2 = cv2.bitwise_or(background, background, mask=text3)
 
     final = cv2.add(background2, foreground)
-    cv2.imwrite("final2.png")
+    cv2.imwrite(output_fn, final)
 
-    breakpoint()
+def render_text(text_in_fn, text_out_fn, size_x, size_y, font, font_size):
+    subprocess.run([
+        "convert",
+        "-size",
+        "{}x{}".format(size_x, size_y),
+        "xc:white",
+        "-font",
+        font,
+        "-pointsize",
+        str(font_size),
+        "-fill",
+        "black",
+        "-draw",
+        "@{}".format(text_in_fn),
+        text_out_fn,
+    ])
 
-tmp()
 '''
+render_text("text.txt", "text.png", 2448, 3264, "Ubuntu", 200)
+combine("background2.png", "foreground2.png", "text.png", "final2.png")
 isolate(
-    sys.argv[2],
-    sys.argv[1],
-    sys.argv[3],
-    sys.argv[4]
+    "sol1.jpg",
+    "../sam_vit_h_4b8939.pth",
+    "1224",
+    "1632",
 )
 '''
